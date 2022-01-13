@@ -1,0 +1,12 @@
+{
+  "name": "bull-playground",
+  "version": "1.0.0",
+  "description": "example of using BullMQ",
+  "main": "index.js",
+  "author": "Corey Van Woert",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "prettier": "^2.5.1"
+  }
+}
