@@ -1,11 +1,11 @@
 import {
   Connection,
-  defaultWorkerOptions,
   defaultJobOptions,
-  listenDefaultWorkerEvents,
   listenDefaultQueueSchedulerEvents,
   defaultQueueOptions,
   defaultQueueSchedulerOptions,
+  workerFactory,
+  queueFactory,
 } from "../index.js";
 import { Job, JobsOptions, Queue, QueueScheduler, Worker } from "bullmq";
 import { Payload as ImportedPayload } from "./payload";
@@ -51,43 +51,21 @@ const sleepHandler = async (job: Job) => {
 };
 
 export async function newFaultyWorker(connection: Connection): Promise<void> {
-  const w = new Worker(queueName, faultyHandler, {
-    ...defaultWorkerOptions,
-    connection,
-  });
-
-  return listenDefaultWorkerEvents(w);
+  await workerFactory(queueName, faultyHandler, {}, connection);
 }
 
 export async function newSleepyWorker(connection: Connection): Promise<void> {
-  const w = new Worker(queueName, sleepHandler, {
-    ...defaultWorkerOptions,
-    connection,
-  });
-
-  return listenDefaultWorkerEvents(w);
+  await workerFactory(queueName, sleepHandler, {}, connection);
 }
 
 export async function newWorker(connection: Connection): Promise<void> {
-  const w = new Worker(queueName, handler, {
-    ...defaultWorkerOptions,
-
-    connection,
-  });
-
-  return listenDefaultWorkerEvents(w);
+  await workerFactory(queueName, handler, {}, connection);
 }
 
 export async function newConcurrentWorker(
   connection: Connection
 ): Promise<void> {
-  const w = new Worker(queueName, sleepHandler, {
-    ...defaultWorkerOptions,
-    concurrency: 50,
-    connection,
-  });
-
-  return listenDefaultWorkerEvents(w);
+  await workerFactory(queueName, sleepHandler, { concurrency: 50 }, connection);
 }
 
 export async function newQueueScheduler(connection: Connection): Promise<void> {
@@ -98,23 +76,21 @@ export async function newQueueScheduler(connection: Connection): Promise<void> {
   return listenDefaultQueueSchedulerEvents(scheduler);
 }
 
-export function newQueue(connection: Connection): Queue {
-  const qOpts = { ...defaultQueueOptions, connection };
-
-  return new Queue(queueName, qOpts);
+export async function newQueue(connection: Connection): Promise<Queue> {
+  return queueFactory(queueName, {}, connection);
 }
 
-export function newQueueWithRetries(connection: Connection): Queue {
+export async function newQueueWithRetries(
+  connection: Connection
+): Promise<Queue> {
   const qOpts = {
-    ...defaultQueueOptions,
     defaultJobOptions: {
       attempts: 3,
       backoff: { delay: 1000, type: "exponential" },
     },
-    connection,
   };
 
-  return new Queue(queueName, qOpts);
+  return queueFactory(queueName, qOpts, connection);
 }
 
 export async function addEvent(

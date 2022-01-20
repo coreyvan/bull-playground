@@ -18,14 +18,14 @@ const host = "localhost";
 const port = 6380;
 
 const run = async () => {
-  const q = newQueue({ host, port });
-  // const q = newQueueWithRetries({ host, port });
+  const q = await newQueue({ host, port });
+  // const q = await newQueueWithRetries({ host, port });
   await newQueueScheduler({ host, port });
 
   // await newWorker({ host, port });
-  await newFaultyWorker({ host, port });
+  // await newFaultyWorker({ host, port });
   // await newSleepyWorker({ host, port });
-  // await newConcurrentWorker({ host, port });
+  await newConcurrentWorker({ host, port });
 
   const app = new Koa();
   const router = new Router();

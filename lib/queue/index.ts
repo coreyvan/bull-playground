@@ -6,14 +6,16 @@ import {
   QueueSchedulerOptions,
   QueueScheduler,
   Job,
+  Queue,
 } from "bullmq";
+import * as Process from "process";
 
 export interface Connection {
   host: string;
   port: number;
 }
 
-export type Processor = (job: Job) => any;
+export type Handler = (job: Job) => any;
 
 export const defaultWorkerOptions: WorkerOptions = {};
 
@@ -44,4 +46,31 @@ export async function listenDefaultQueueSchedulerEvents(
   scheduler.on("stalled", (jobId) => {
     console.log(`[scheduler] job ${jobId} stalled`);
   });
+}
+
+export async function workerFactory(
+  queueName: string,
+  handler: Handler,
+  opts: WorkerOptions,
+  connection: Connection
+): Promise<Worker> {
+  let wOpts = { ...defaultWorkerOptions, ...opts, connection };
+
+  const w = new Worker(queueName, handler, wOpts);
+
+  await listenDefaultWorkerEvents(w);
+
+  return new Promise<Worker>((resolve) => resolve(w));
+}
+
+export async function queueFactory(
+  queueName: string,
+  opts: QueueOptions,
+  connection: Connection
+): Promise<Queue> {
+  let qOpts = { ...defaultQueueOptions, ...opts, connection };
+
+  const q = new Queue(queueName, qOpts);
+
+  return new Promise<Queue>((resolve) => resolve(q));
 }
