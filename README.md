@@ -2,13 +2,13 @@
 Experiments with Typescript + BullMQ for message queuing
 
 # Run redis
-Make sure an instance of redis is running on localhost:6380
+Make sure an instance of redis is running.
 
 # Run the example API
 ```shell
-yarn run server
+yarn run server [redis host] [redis port]
 ```
-This should start the server running on port 3000
+This should start the server running on port 3000 using redis at the specified host and port (if blank, default localhost:6380)
 
 # Run a worker
 ```shell

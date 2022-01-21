@@ -18,12 +18,11 @@
     "@bull-board/api": "^3.9.0",
     "@bull-board/koa": "^3.9.0",
     "bullmq": "^1.64.0",
-    "require-glob": "^4.0.0",
     "typescript": "^4.5.4"
   },
   "scripts": {
     "ts-watch": "tsc --pretty -w",
-    "worker": "node --loader ts-node/esm.mjs bin/workers/index.ts $1",
-    "server": "node --loader ts-node/esm.mjs index.ts"
+    "worker": "node --loader ts-node/esm.mjs bin/workers/index.ts $1 $2 $3",
+    "server": "node --loader ts-node/esm.mjs index.ts $1 $2"
   }
 }

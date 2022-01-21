@@ -14,13 +14,16 @@ import { KoaAdapter } from "@bull-board/koa";
 import Koa from "koa";
 import Router from "koa-router";
 
-const host = "localhost";
-const port = 6380;
+const host = process.argv[2] || "localhost";
+const port = process.argv[3] || "6380";
+
+const connection = { host, port: parseInt(port) };
 
 const run = async () => {
+  console.log(`... using redis at ${host}:${port}`);
   // const q = await newQueue({ host, port });
-  const q = await newQueueWithRetries({ host, port });
-  await newQueueScheduler({ host, port });
+  const q = await newQueueWithRetries(connection);
+  await newQueueScheduler(connection);
 
   const app = new Koa();
   const router = new Router();
@@ -72,9 +75,8 @@ const run = async () => {
 
   await app.listen(3000);
   // eslint-disable-next-line no-console
-  console.log("Running on 3000...");
+  console.log("... server running on 3000...");
   console.log("For the UI of instance1, open http://localhost:3000/ui");
-  console.log("Make sure Redis is running on port 6379 by default");
   console.log("To populate the queue, run:");
   console.log("  curl http://localhost:3000/add?message=Example");
   console.log("To populate the queue with custom delay, run:");

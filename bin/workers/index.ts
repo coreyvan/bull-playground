@@ -2,7 +2,9 @@ import * as BuildingSMS from "../../lib/queue/building-sms/index.js";
 import { Worker } from "bullmq";
 import { Connection } from "../../lib/queue";
 
-const connection: Connection = { host: "localhost", port: 6380 };
+const host = process.argv[3] || "localhost";
+const port = process.argv[4] || "6380";
+const connection: Connection = { host, port: parseInt(port) };
 
 async function run() {
   let command = process.argv[2] || "default";
