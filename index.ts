@@ -77,7 +77,7 @@ const run = async () => {
   console.log("Make sure Redis is running on port 6379 by default");
   console.log("To populate the queue, run:");
   console.log("  curl http://localhost:3000/add?message=Example");
-  console.log("To populate the queue with custom options (opts), run:");
+  console.log("To populate the queue with custom delay, run:");
   console.log("  curl http://localhost:3000/add?message=Test&delay=9");
 };
 
