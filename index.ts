@@ -18,14 +18,9 @@ const host = "localhost";
 const port = 6380;
 
 const run = async () => {
-  const q = await newQueue({ host, port });
-  // const q = await newQueueWithRetries({ host, port });
+  // const q = await newQueue({ host, port });
+  const q = await newQueueWithRetries({ host, port });
   await newQueueScheduler({ host, port });
-
-  // await newWorker({ host, port });
-  // await newFaultyWorker({ host, port });
-  // await newSleepyWorker({ host, port });
-  await newConcurrentWorker({ host, port });
 
   const app = new Koa();
   const router = new Router();
@@ -46,7 +41,11 @@ const run = async () => {
     if (delay) {
       delay = +delay * 1000; // delay must be a number
     }
-    await addEvent(q, { message: ctx.query.message }, { delay });
+
+    let repeat = ctx.query.repeat || 1;
+    for (let i = 0; i < repeat; i++) {
+      await addEvent(q, { message: ctx.query.message }, { delay });
+    }
 
     ctx.body = {
       ok: true,

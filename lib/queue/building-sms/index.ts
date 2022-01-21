@@ -2,7 +2,6 @@ import {
   Connection,
   defaultJobOptions,
   listenDefaultQueueSchedulerEvents,
-  defaultQueueOptions,
   defaultQueueSchedulerOptions,
   workerFactory,
   queueFactory,
@@ -19,9 +18,6 @@ const sleep = (t: number) =>
 export interface Payload extends ImportedPayload {}
 
 const handler = async (job: Job) => {
-  if (Math.round(Math.random() * 10) % 2) {
-    // throw Error("random error!");
-  }
   const payload = job.data as Payload;
   console.log(`[${job.name} ${job.id}]: received message "${payload.message}"`);
 };
@@ -34,11 +30,12 @@ const faultyHandler = async (job: Job) => {
   console.log(`[${job.name} ${job.id}]: received message "${payload.message}"`);
 };
 
-const sleepHandler = async (job: Job) => {
+const sleepyHandler = async (job: Job) => {
+  console.log(`[${job.name} ${job.id}]: starting job"`);
   let progress = 0;
 
   while (progress < 100) {
-    await sleep(5);
+    await sleep(2);
     progress += 10;
     await job.updateProgress(progress);
     await job.log("made a little progress");
@@ -50,22 +47,27 @@ const sleepHandler = async (job: Job) => {
   );
 };
 
-export async function newFaultyWorker(connection: Connection): Promise<void> {
-  await workerFactory(queueName, faultyHandler, {}, connection);
+export async function newFaultyWorker(connection: Connection): Promise<Worker> {
+  return workerFactory(queueName, faultyHandler, {}, connection);
 }
 
-export async function newSleepyWorker(connection: Connection): Promise<void> {
-  await workerFactory(queueName, sleepHandler, {}, connection);
+export async function newSleepyWorker(connection: Connection): Promise<Worker> {
+  return workerFactory(queueName, sleepyHandler, {}, connection);
 }
 
-export async function newWorker(connection: Connection): Promise<void> {
-  await workerFactory(queueName, handler, {}, connection);
+export async function newWorker(connection: Connection): Promise<Worker> {
+  return workerFactory(queueName, handler, {}, connection);
 }
 
 export async function newConcurrentWorker(
   connection: Connection
-): Promise<void> {
-  await workerFactory(queueName, sleepHandler, { concurrency: 50 }, connection);
+): Promise<Worker> {
+  return workerFactory(
+    queueName,
+    sleepyHandler,
+    { concurrency: 50 },
+    connection
+  );
 }
 
 export async function newQueueScheduler(connection: Connection): Promise<void> {
