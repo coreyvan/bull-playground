@@ -23,6 +23,7 @@
   },
   "scripts": {
     "ts-watch": "tsc --pretty -w",
-    "worker": "node --loader ts-node/esm.mjs bin/workers/index.ts $1"
+    "worker": "node --loader ts-node/esm.mjs bin/workers/index.ts $1",
+    "server": "node --loader ts-node/esm.mjs index.ts"
   }
 }
