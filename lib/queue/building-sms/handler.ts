@@ -1,7 +1,7 @@
 import { SandboxedJob } from "bullmq";
 import { Payload } from "./payload";
 
-module.exports = async (job: SandboxedJob) => {
-  const payload = job.data as Payload;
+module.exports = async (job: SandboxedJob<Payload>) => {
+  const payload = job.data;
   console.log(`[${job.name}]: received ${payload}`);
 };

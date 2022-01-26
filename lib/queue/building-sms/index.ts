@@ -15,10 +15,10 @@ const jobName = "building.sms";
 const sleep = (t: number) =>
   new Promise((resolve) => setTimeout(resolve, t * 1000));
 
-export interface Payload extends ImportedPayload {}
+export interface BuildingSMSPayload extends ImportedPayload {}
 
 const handler = async (job: Job) => {
-  const payload = job.data as Payload;
+  const payload = job.data as BuildingSMSPayload;
   console.log(`[${job.name} ${job.id}]: received message "${payload.message}"`);
 };
 
@@ -26,7 +26,7 @@ const faultyHandler = async (job: Job) => {
   if (Math.round(Math.random() * 10) % 2) {
     throw Error("random error!");
   }
-  const payload = job.data as Payload;
+  const payload = job.data as BuildingSMSPayload;
   console.log(`[${job.name} ${job.id}]: received message "${payload.message}"`);
 };
 
@@ -41,7 +41,7 @@ const sleepyHandler = async (job: Job) => {
     await job.log("made a little progress");
   }
 
-  const payload = job.data as Payload;
+  const payload = job.data as BuildingSMSPayload;
   console.log(
     `[${job.name} ${job.id}]: finished job: received message "${payload.message}"`
   );
@@ -97,7 +97,7 @@ export async function newQueueWithRetries(
 
 export async function addEvent(
   queue: Queue,
-  payload: Payload,
+  payload: BuildingSMSPayload,
   opts?: JobsOptions
 ): Promise<void> {
   let jobOpts = { ...defaultJobOptions, ...opts };

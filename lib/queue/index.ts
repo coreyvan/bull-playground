@@ -17,6 +17,51 @@ export interface Connection {
 
 export type Handler = (job: Job) => any;
 
+export type ConcretePayload = {
+  message: string;
+};
+
+export interface Producer<T> {
+  add(payload: T): Promise<void>;
+}
+
+export class ConcreteProducer implements Producer<ConcretePayload> {
+  constructor(connection: Connection) {
+    this.connection = connection;
+  }
+
+  connection: Connection;
+  async add(payload: ConcretePayload): Promise<void> {
+    const q = new Queue<ConcretePayload>("test.queue", {
+      connection: this.connection,
+    });
+
+    await q.add("concrete.job", payload);
+  }
+}
+
+const producerMap = {
+  "concrete.producer": ConcreteProducer,
+};
+
+const payloadMap = {
+  "concrete.producer": ConcretePayload,
+};
+
+export class ProducerFactory {
+  create<T>(type: new () => T): T {
+    return new type();
+  }
+}
+
+export async function produceEvent(
+  producerType: string,
+  payload: T
+): Promise<void> {}
+export function generateProducer<T>(producerType: new () => T): T {
+  return new producerType();
+}
+
 export const defaultWorkerOptions: WorkerOptions = {};
 
 export const defaultJobOptions: JobsOptions = {

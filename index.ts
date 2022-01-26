@@ -8,11 +8,14 @@ import {
   newConcurrentWorker,
   addEvent,
 } from "./lib/queue/building-sms/index.js";
+import { addEvent as BuildingEmailaddEvent} from
+      import {generateEvent, eventTypes} from lib/queue
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter.js";
 import { KoaAdapter } from "@bull-board/koa";
 import Koa from "koa";
 import Router from "koa-router";
+import { ConcreteProducer } from "./lib/queue";
 
 const host = process.argv[2] || "localhost";
 const port = process.argv[3] || "6380";
